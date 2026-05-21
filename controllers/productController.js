@@ -1,18 +1,51 @@
 const Product = require('../models/Product');
 
 // GET /api/products?category=Ghee&q=ghee
+// exports.getProducts = async (req, res) => {
+//   try {
+//     const { category, q } = req.query;
+//     const filter = {};
+//     if (category && category !== 'All') filter.category = category;
+//     if (q) filter.name = { $regex: q, $options: 'i' };
+//     const products = await Product.find(filter).sort({ createdAt: -1 });
+//     res.json({ products });
+//   } catch (err) {
+//     res.status(500).json({ message: 'Failed to fetch products' });
+//   }
+// };
+
 exports.getProducts = async (req, res) => {
   try {
     const { category, q } = req.query;
-    const filter = {};
-    if (category && category !== 'All') filter.category = category;
-    if (q) filter.name = { $regex: q, $options: 'i' };
-    const products = await Product.find(filter).sort({ createdAt: -1 });
+
+    const filter = {
+      stock: { $gt: 0 }, // ONLY AVAILABLE PRODUCTS
+    };
+
+    if (category && category !== 'All') {
+      filter.category = category;
+    }
+
+    if (q) {
+      filter.name = {
+        $regex: q,
+        $options: 'i',
+      };
+    }
+
+    const products = await Product.find(filter)
+      .sort({ createdAt: -1 });
+
     res.json({ products });
+
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch products' });
+
+    res.status(500).json({
+      message: 'Failed to fetch products',
+    });
   }
 };
+
 
 // GET /api/products/:id
 exports.getProduct = async (req, res) => {
