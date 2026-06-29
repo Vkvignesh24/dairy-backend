@@ -61,7 +61,26 @@ exports.getProduct = async (req, res) => {
 // POST /api/products  (admin/seed)
 exports.createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    // const product = await Product.create(req.body);
+    const data = {
+      ...req.body,
+    };
+
+    if (!Array.isArray(data.images)) {
+      data.images = [];
+    }
+
+    if (data.images.length < 1 || data.images.length > 5) {
+      return res.status(400).json({
+        message: 'Product requires minimum 1 and maximum 5 images.'
+      });
+    }
+
+    const product = await Product.create(data);
+
+    res.status(201).json({
+      product
+    });
     res.status(201).json({ product });
   } catch (err) {
     res.status(400).json({ message: err.message });

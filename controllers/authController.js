@@ -54,6 +54,7 @@ exports.firebaseLogin = async (req, res) => {
         email: user.email,
         phone: user.phone,
         address: user.address, // Include address in payload
+        houseImages: user.houseImages,
         role: user.role,
       },
     });
@@ -72,6 +73,7 @@ exports.me = async (req, res) => {
       email: req.user.email,
       phone: req.user.phone,
       address: req.user.address,
+      houseImages: req.user.houseImages,
       role: req.user.role,
     },
   });
@@ -80,7 +82,7 @@ exports.me = async (req, res) => {
 // PUT /api/auth/profile (protected)
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, phone, address } = req.body;
+    const { name, phone, address, houseImages } = req.body;
     const user = req.user; // Injected by 'protect' middleware
 
     // 1. Validation
@@ -99,6 +101,23 @@ exports.updateProfile = async (req, res) => {
     user.phone = phone.trim();
     user.address = address.trim();
 
+    if (houseImages != null) {
+
+      if (!Array.isArray(houseImages)) {
+        return res.status(400).json({
+          message: 'Images must be an array.'
+        });
+      }
+
+      if (houseImages.length < 1 || houseImages.length > 3) {
+        return res.status(400).json({
+          message: 'Upload minimum 1 and maximum 3 house images.'
+        });
+      }
+
+      user.houseImages = houseImages;
+    }
+
     await user.save();
 
     // 3. Return updated user
@@ -110,6 +129,7 @@ exports.updateProfile = async (req, res) => {
         email: user.email,
         phone: user.phone,
         address: user.address,
+        houseImages:user.houseImages,
         role: user.role,
       },
     });

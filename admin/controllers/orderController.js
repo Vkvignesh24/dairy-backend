@@ -66,6 +66,19 @@ exports.list = async (req, res) => {
     const items = await Promise.all(
       slice.map(async (o) => {
         const priced = await reprice(o);
+        // return {
+        //   id: o._id,
+        //   customerName: o.userId?.name || '-',
+        //   phone: o.userId?.phone || '-',
+        //   address: o.address,
+        //   items: priced.items,
+        //   subtotal: priced.subtotal,
+        //   deliveryFee: priced.deliveryFee,
+        //   total: priced.total,
+        //   status: o.status,
+        //   createdAt: o.createdAt,
+        // };
+
         return {
           id: o._id,
           customerName: o.userId?.name || '-',
@@ -75,9 +88,27 @@ exports.list = async (req, res) => {
           subtotal: priced.subtotal,
           deliveryFee: priced.deliveryFee,
           total: priced.total,
+          paymentMethod: o.paymentMethod || 'COD',
           status: o.status,
           createdAt: o.createdAt,
+
+          date: new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          }).format(o.createdAt),
+
+          time: new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+          }).format(o.createdAt),
         };
+
+
       })
     );
 
@@ -107,6 +138,19 @@ async function fetchAll(req) {
   return Promise.all(
     docs.map(async (o) => {
       const priced = await reprice(o);
+      // return {
+      //   id: o._id,
+      //   customerName: o.userId?.name || '-',
+      //   phone: o.userId?.phone || '-',
+      //   address: o.address,
+      //   items: priced.items,
+      //   subtotal: priced.subtotal,
+      //   deliveryFee: priced.deliveryFee,
+      //   total: priced.total,
+      //   status: o.status,
+      //   createdAt: o.createdAt,
+      // };
+
       return {
         id: o._id,
         customerName: o.userId?.name || '-',
@@ -116,8 +160,24 @@ async function fetchAll(req) {
         subtotal: priced.subtotal,
         deliveryFee: priced.deliveryFee,
         total: priced.total,
+        paymentMethod: o.paymentMethod || 'COD',
         status: o.status,
         createdAt: o.createdAt,
+
+        date: new Intl.DateTimeFormat('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }).format(o.createdAt),
+
+        time: new Intl.DateTimeFormat('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        }).format(o.createdAt),
       };
     })
   );

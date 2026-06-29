@@ -6,7 +6,19 @@ const productSchema = new mongoose.Schema(
     category: { type: String, required: true, trim: true },
     price: { type: Number, required: true, min: 0 },
     unit: { type: String, default: '' },
-    image: { type: String, default: '' },
+
+    images: {
+      type: [String],
+      validate: {
+        validator(images) {
+          return images.length >= 1 && images.length <= 5;
+        },
+        message: 'Product must contain 1 to 5 images.'
+      },
+      required: true,
+      default: []
+    },
+
     icon: { type: String, default: '' },     // optional icon name for Flutter mapping
     color: { type: String, default: '' },    // optional hex
     stock: { type: Number, default: 100 },
